@@ -1,9 +1,53 @@
+import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 function Register() {
+
+  const navigate = useNavigate();
+  const confirmRef = useRef(null);
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
+  const [disabled, setDisabled] = useState(false);
+
+
+  useEffect(() => {
+    const Signed = JSON.parse(localStorage.getItem("sign"))
+    if (Signed == false) {
+      localStorage.setItem("sing", JSON.stringify(true));
+      window.location.reload();
+    }
+  }, []);
+
+  function handleAdd(e) {
+    e.preventDefault();
+    const confirm = confirmRef.current.value.trim();
+    const email = emailRef.current.value.trim();
+    const password = passwordRef.current.value.trim();
+    if (confirm == null || emailRef == null || passwordRef == null) {
+      alert('Inputs null');
+      return;
+    }
+
+    if(confirm != password) {
+      alert("password not match")
+      return;
+    }
+
+    const user = {
+      email: email,
+      password: password
+    };
+    localStorage.setItem('user', JSON.stringify(user));
+    navigate('/login');
+
+    setDisabled(false);
+  }
+
   return (
     <>
       <section className="bg-neutral">
         <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-          <div className="w-full bg-white rounded-lg shadow dark:border md:mt -0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+          <div className="w-full bg-white rounded-lg shadow border md:mt -0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                 Create and account
@@ -11,12 +55,13 @@ function Register() {
               <form className="space-y-4 md:space-y-6" action="#">
                 <div>
                   <label
-                    for="email"
+                    htmlFor="email"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
                     Your email
                   </label>
                   <input
+                  ref={emailRef}
                     type="email"
                     name="email"
                     id="email"
@@ -27,12 +72,13 @@ function Register() {
                 </div>
                 <div>
                   <label
-                    for="password"
+                    htmlFor="password"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
                     Password
                   </label>
                   <input
+                  ref={passwordRef}
                     type="password"
                     name="pass word"
                     id="password"
@@ -43,12 +89,13 @@ function Register() {
                 </div>
                 <div>
                   <label
-                    for="confirm-password"
+                    htmlFor="confirm-password"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
                     Confirm password
                   </label>
                   <input
+                  ref={confirmRef}
                     type="confirm-password"
                     name="confirm-password"
                     id="confirm-password"
@@ -69,7 +116,7 @@ function Register() {
                   </div>
                   <div className="ml-3 text-sm">
                     <label
-                      for="terms"
+                      htmlFor="terms"
                       className="font-light text-gray-500 dark:text-gray-300"
                     >
                       I accept the{" "}
@@ -84,6 +131,8 @@ function Register() {
                 </div>
                 <button
                   type="submit"
+                  disabled={disabled}
+                  onClick={handleAdd}
                   className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                 >
                   Create an account
@@ -91,7 +140,7 @@ function Register() {
                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                   Already have an account?{" "}
                   <a
-                    href="#"
+                    href="/login"
                     className="font-medium text-primary-600 hover:underline dark:text-primary-500"
                   >
                     Login here

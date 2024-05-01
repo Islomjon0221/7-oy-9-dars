@@ -1,4 +1,37 @@
+import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 function Login() {
+  const emailRef = useRef(null)
+  const passwordRef = useRef(null)
+  const [disabled, setDisabled] = useState(false)
+
+  const navigate = useNavigate()
+
+  function handleAdd(e) {
+    e.preventDefault();
+    setDisabled(true);
+    const validate = JSON.parse(localStorage.getItem("user"));
+    if (validate) {
+      if (validate.email === emailRef.current.value && validate.password === passwordRef.current.value) {
+        localStorage.setItem('sing', JSON.stringify(true));
+        navigate("/");
+      } else {
+        alert("User not found");
+      }
+    } else {
+      alert("Sign up");
+      navigate("/register");
+    }
+
+    setDisabled(false);
+  }
+
+  function handleThrow() {
+    localStorage.clear("sign")
+    navigate("/")
+  }
+
   return (
     <section className="bg-neutral">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
@@ -10,12 +43,13 @@ function Login() {
             <form className="space-y-4 md:space-y-6" action="#">
               <div>
                 <label
-                  for="email"
+                  htmlFor="email"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
                   Your email
                 </label>
                 <input
+                ref={emailRef}
                   type="email"
                   name="email"
                   id="email"
@@ -25,12 +59,13 @@ function Login() {
               </div>
               <div>
                 <label
-                  for="password"
+                  htmlFor="password"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
                   Password
                 </label>
                 <input
+                ref={passwordRef}
                   type="password"
                   name="password"
                   id="password"
@@ -50,7 +85,7 @@ function Login() {
                   </div>
                   <div className="ml-3 text-sm">
                     <label
-                      for="remember"
+                      htmlFor="remember"
                       className="text-gray-500 dark:text-gray-300"
                     >
                       Remember me
@@ -65,19 +100,30 @@ function Login() {
                 </a>
               </div>
               <button
+                onClick={handleAdd}
                 type="submit"
+                disabled={disabled}
                 className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
               >
                 Sign in
               </button>
+              <button
+                onClick={handleThrow}
+                type="submit"
+                className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+              >
+                Home  
+              </button>
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                 Don’t have an account yet?{" "}
                 <a
-                  href="#"
+                  href="/register"
                   className="font-medium text-primary-600 hover:underline dark:text-primary-500"
                 >
                   Sign up
                 </a>
+
+
               </p>
             </form>
           </div>
